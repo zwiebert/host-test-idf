@@ -1,15 +1,3 @@
-[submodule "components/storage/spiffs"]
-	path = components/storage/esp8266/spiffs
-	url = https://github.com/pellepl/spiffs.git
-[submodule "components/net_mqtt/esp8266/esp_mqtt"]
-	path = components/net_mqtt/esp8266/esp_mqtt
-	url = https://github.com/tuanpmt/esp_mqtt.git
-[submodule "components/jsmn"]
-	path = components/jsmn/jsmn
-	url = https://github.com/zserge/jsmn.git
 [submodule "components/test_host/unity"]
 	path = components/test_host/external/unity
 	url = https://github.com/ThrowTheSwitch/Unity.git
-[submodule "nanopb/nanopb"]
-	path = components/nanopb/nanopb
-	url = https://github.com/nanopb/nanopb.git
