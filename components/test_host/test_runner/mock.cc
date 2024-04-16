@@ -1,4 +1,5 @@
-#include <utils_misc/int_types.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 void  mcu_restart(void) {}
 bool mcu_get_buttonPin(void) { return false; }

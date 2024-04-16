@@ -9,8 +9,6 @@ endif()
 idf_component_register(
     SRCS ${srcs} 
     INCLUDE_DIRS test_runner
-    #INCLUDE_DIRS unity/src
-    REQUIRES utils_misc
 )
 
 if(HOST_TEST_CATCH2)
