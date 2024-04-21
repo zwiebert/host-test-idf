@@ -56,7 +56,6 @@ macro(add_tests)
   endforeach()
 
   foreach(test_file ${__SRCS})
-    # message("file: ${test_file}")
     get_filename_component(test_file_name ${test_file} NAME_WE)
     set(test_name "test.${parent_dir_name}.${test_file_name}")
 
@@ -69,8 +68,6 @@ macro(add_tests)
 
     target_compile_options(${test_name} PRIVATE ${comp_compile_opts})
     target_compile_features(${test_name} PRIVATE ${comp_compile_feats})
-    # target_link_options(${test_name} PRIVATE "-flto" "-O2") target_link_libraries(${test_name} PRIVATE unity)
-
 
     set(working_directory "${PROJECT_BINARY_DIR}/test_wd/${test_name}")
     file(MAKE_DIRECTORY ${working_directory})
@@ -100,8 +97,6 @@ macro(add_libs)
   if (NOT ${COMPONENT_LIB} STREQUAL "test_host")
     list(APPEND __PRIV_REQUIRES test_host)
   endif()
-
-  #message("CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
   
   list(TRANSFORM __SRCS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/" OUTPUT_VARIABLE my_srcs)
   set(COMPONENT_LIBS_SRCS "${COMPONENT_LIBS_SRCS}" "${my_srcs}"  CACHE INTERNAL "${COMPONENT_LIBS_SRCS}")    
@@ -111,24 +106,15 @@ macro(add_libs)
 
 
   if("${__SRCS}" STREQUAL "")
-    #message("INTERFACE LIB: ${COMPONENT_LIB}: srcs: >>>${__SRCS}<<<")
     set(COMP_ACC INTERFACE)
   else()
-     #message("PUBLIC LIB: ${COMPONENT_LIB}: srcs: >>>${__SRCS}<<<")
     set(COMP_ACC PUBLIC)
   endif()
 
-
-  set(COMPONENT_LIBS_INC_DIRS "${COMPONENT_LIBS_INC_DIRS}" ${INC_PATHS} # ${PRIV_INC_PATHS}
-   CACHE INTERNAL "${COMPONENT_LIBS_INC_DIRS}")    
-
-  set(COMPONENT_LIBS "${COMPONENT_LIBS}" "${COMPONENT_LIB}"  CACHE INTERNAL "${COMPONENT_LIBS}")
-
-  set(COMPONENT_LIBS_DIRS "${COMPONENT_LIBS_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}"  CACHE INTERNAL "${COMPONENT_LIBS_DIRS}")
+ set(COMPONENT_LIBS "${COMPONENT_LIBS}" "${COMPONENT_LIB}"  CACHE INTERNAL "${COMPONENT_LIBS}")
 
   foreach(comp_dir ${COMPONENT_DIRECTORIES} ${EXTRA_COMPONENT_DIRS})
     foreach(req ${__REQUIRES} ${__PRIV_REQUIRES})
-      #message(STATUS "pro_source_dir ${PROJECT_SOURCE_DIR} // ${PROJECT_BINARY_DIR} //  ${CMAKE_CURRENT_SOURCE_DIR} // ${COMPONENT_LIBS_DIRS}")
       if(EXISTS "${comp_dir}/${req}/CMakeLists.txt")
         if(NOT EXISTS "${PROJECT_BINARY_DIR}/${BIN_COMP_ROOT}/${req}")
           add_subdirectory("${comp_dir}/${req}" "${PROJECT_BINARY_DIR}/${BIN_COMP_ROOT}/${req}")
@@ -137,20 +123,15 @@ macro(add_libs)
     endforeach()
   endforeach()
 
-  #message("__REQUIRES: ${__REQUIRES}")
-  #message("COMPONENT_LIBS: ${COMPONENT_LIBS}")
   filter_valid_comps(__REQUIRES COMPONENT_LIBS)
   filter_valid_comps(__PRIV_REQUIRES COMPONENT_LIBS)
-  #message("__REQUIRES: ${__REQUIRES}")
   
   if("${COMP_ACC}" STREQUAL "INTERFACE")
-    # message("INTERFACE LIB: ${COMPONENT_LIB}: srcs: >>>${__SRCS}<<<")
     add_library(${COMPONENT_LIB} INTERFACE ${__SRCS})
     target_include_directories(${COMPONENT_LIB} INTERFACE ${INC_PATHS})
     target_link_libraries("${COMPONENT_LIB}" INTERFACE ${__REQUIRES})
 
   else()
-    # message("PUBLIC LIB: ${COMPONENT_LIB}: srcs: >>>${__SRCS}<<<")
     add_library(${COMPONENT_LIB} STATIC ${__SRCS})
     target_include_directories(${COMPONENT_LIB} PUBLIC ${INC_PATHS} PRIVATE ${PRIV_INC_PATHS})
      set_target_properties(${COMPONENT_LIB} PROPERTIES LINK_INTERFACE_MULTIPLICITY 6)
@@ -159,9 +140,7 @@ macro(add_libs)
   
 
   if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/test/CMakeLists.txt")
-    # message("test_directory: ${CMAKE_CURRENT_LIST_DIR}/test srcs: ${__SRCS}") if("fernotron_app" STREQUAL ${COMPONENT_LIB}) # XXX: experimental code
     add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/test")
-    # endif()
   endif()
 endmacro()
 
@@ -176,12 +155,10 @@ macro(idf_component_register)
   list(TRANSFORM __INCLUDE_DIRS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/" OUTPUT_VARIABLE INC_PATHS)
   list(TRANSFORM __PRIV_INCLUDE_DIRS PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/" OUTPUT_VARIABLE PRIV_INC_PATHS)
 
-
   get_filename_component(COMPONENT_LIB ${CMAKE_CURRENT_LIST_DIR} NAME)
   set(COMPONENT_LIB ${COMPONENT_LIB} )
   set(__SRCS ${__SRCS} )
 
-  #message(STATUS "COMPONENT_LIB: ${COMPONENT_LIB}")
   if("test" STREQUAL "${COMPONENT_LIB}")
     add_tests()
   else()
@@ -204,34 +181,3 @@ function(component_compile_options)
     endif()
   endif()
 endfunction()
-
-
-
-macro(doxy_create_input)
-#message("all_libs_inc_Dirs: ${COMPONENT_LIBS_INC_DIRS}")
-file(WRITE "${CMAKE_BINARY_DIR}/all_libs_dirs.txt" ${COMPONENT_LIBS_DIRS})
-
-set(doxy_input_file "${CMAKE_BINARY_DIR}/doxy_input_file.txt")
-file(WRITE ${doxy_input_file} "")
-foreach(src ${COMPONENT_LIBS_SRCS})
-  file(APPEND ${doxy_input_file} "INPUT += ${src}\n")
-endforeach()
-
-foreach(dir ${COMPONENT_LIBS_INC_DIRS})
-  foreach(suffix .h .hh .hpp)
-    file(GLOB_RECURSE hdr_files "${dir}/*${suffix}")
-    foreach(hdr_file ${hdr_files})
-      file(APPEND ${doxy_input_file} "INPUT += ${hdr_file}\n")
-    endforeach()
-  endforeach()
-endforeach()
-
-foreach(dir ${COMPONENT_LIBS_DIRS})
-  foreach(suffix .h .hh .hpp)
-    file(GLOB hdr_files "${dir}/*${suffix}")
-    foreach(hdr_file ${hdr_files})
-      file(APPEND ${doxy_input_file} "INPUT += ${hdr_file}\n")
-    endforeach()
-  endforeach()
-endforeach()
-endmacro()
