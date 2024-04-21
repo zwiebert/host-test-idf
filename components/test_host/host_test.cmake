@@ -126,7 +126,7 @@ macro(add_libs)
 
   set(COMPONENT_LIBS_DIRS "${COMPONENT_LIBS_DIRS}" "${CMAKE_CURRENT_SOURCE_DIR}"  CACHE INTERNAL "${COMPONENT_LIBS_DIRS}")
 
-  foreach(comp_dir ${COMPONENT_DIRECTORIES})
+  foreach(comp_dir ${COMPONENT_DIRECTORIES} ${EXTRA_COMPONENT_DIRS})
     foreach(req ${__REQUIRES} ${__PRIV_REQUIRES})
       #message(STATUS "pro_source_dir ${PROJECT_SOURCE_DIR} // ${PROJECT_BINARY_DIR} //  ${CMAKE_CURRENT_SOURCE_DIR} // ${COMPONENT_LIBS_DIRS}")
       if(EXISTS "${comp_dir}/${req}/CMakeLists.txt")
