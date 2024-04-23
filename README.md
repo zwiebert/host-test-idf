@@ -1,6 +1,6 @@
 # host-test-idf
 
-  esp-idf component for running unity tests in componenents test directory on host
+  esp-idf component for running esp-idf unity tests in componenents test directory on host
 
 ### Project Author
 
