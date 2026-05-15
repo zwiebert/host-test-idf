@@ -11,6 +11,8 @@ set(TEST_HOST true)
 set(UNIT_TESTING true)
 set(PLATFORM_HOST true)
 set(BIN_COMP_ROOT "comp")
+set(ESP_PLATFORM TRUE)
+set(IDF_TARGET "linux")
 
 include(${PROJECT_BINARY_DIR}/config/sdkconfig.cmake)
 
@@ -102,7 +104,7 @@ macro(add_libs)
   set(COMPONENT_LIBS_SRCS "${COMPONENT_LIBS_SRCS}" "${my_srcs}"  CACHE INTERNAL "${COMPONENT_LIBS_SRCS}")    
 
 
-  srcs_filter_by_mcu()
+  #xxx# srcs_filter_by_mcu()
 
 
   if("${__SRCS}" STREQUAL "")
