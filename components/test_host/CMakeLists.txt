@@ -21,5 +21,5 @@ if(HOST_TEST_UNITY)
   target_link_libraries(test_host PUBLIC unity)
 endif()
 
-component_compile_options(${comp_compile_opts})
-component_compile_features(${comp_compile_feats})
+ 
+ 
