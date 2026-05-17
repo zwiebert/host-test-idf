@@ -63,19 +63,10 @@ endblock()
 endmacro()
 
 # Remove items of list0 which are not also in list1
-macro(list_intersectXX)
-  foreach(req ${${ARGV0}})
-    list(FIND ${ARGV1} "${req}" idx)
-    if(${idx} EQUAL -1)
-      list(REMOVE_ITEM ${ARGV0} ${req})
-    endif()
-  endforeach()
-endmacro()
-
-macro(list_intersect)
-  set(_LI_UNIQUE ${${ARGV0}})
-  list(REMOVE_ITEM _LI_UNIQUE ${${ARGV1}})
-  list(REMOVE_ITEM ${ARGV0} ${_LI_UNIQUE})
+macro(list_intersect list0 list1)
+  set(_LI_UNIQUE ${${list0}})
+  list(REMOVE_ITEM _LI_UNIQUE ${${list1}})
+  list(REMOVE_ITEM ${list0} ${_LI_UNIQUE})
   unset(_LI_UNIQUE)
 endmacro()
 
@@ -136,7 +127,7 @@ endmacro()
 # Implement the esp-idf component register macro.
 # If this component is called "test", then call add_tests() to build the test-apps and register them to ctest
 # If this component is not called "test", then call add_libs() to add its as a component/library
-# The add_libs() call may add_subdirecty more components which then wil call idf_component_register()
+# The add_libs() call may add_subdirecty more components which then will call idf_component_register()
 macro(idf_component_register)
   set(options)
   set(single_value KCONFIG KCONFIG_PROJBUILD)
@@ -156,14 +147,6 @@ macro(idf_component_register)
     add_libs()
   endif()
 endmacro()
-
-function(component_compile_features)
-  if(NOT "${__SRCS}" STREQUAL "")
-    if(NOT ${COMPONENT_LIB} STREQUAL "test")
-      target_compile_features(${COMPONENT_LIB} PRIVATE ${ARGV})
-    endif()
-  endif()
-endfunction()
 
 function(component_compile_options)
   if(NOT "${__SRCS}" STREQUAL "")
